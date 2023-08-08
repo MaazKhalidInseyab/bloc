@@ -1,0 +1,6 @@
+enum Code{
+  LOGIN_RESPONSE,
+  GPT_USER_ID,
+  LOGIN_STATUS,
+  TOPICS,
+}
