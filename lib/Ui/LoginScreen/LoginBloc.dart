@@ -1,5 +1,6 @@
 import 'package:bloc/DataProvider.dart';
 import 'package:bloc/ProgressDialogListener.dart';
+import 'package:bloc/Ui/Home/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import '../../Factory.dart';
 import '../../Models/loginResponse.dart';
@@ -33,7 +34,7 @@ class LoginBloc implements ProgressDialogListener{
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Topics(),
+          builder: (context) => HomeScreen(),
         ));
   }
 

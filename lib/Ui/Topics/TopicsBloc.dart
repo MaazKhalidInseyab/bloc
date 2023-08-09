@@ -13,7 +13,7 @@ class TopicsBloc implements ProgressDialogListener{
 
 final BuildContext context;
    final topics=BehaviorSubject<List<Topic>>();
-   var dio = Dio();
+
 
   TopicsBloc(this.context);
   

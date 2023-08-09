@@ -23,7 +23,7 @@ class DataProvider {
     }
 
     if (formKey.currentState!.validate()) {
-      progressDialogListener.show();////start showing circular progress bar
+      progressDialogListener.show(); ////start showing circular progress bar
       var formData = FormData.fromMap({
         'Email': email,
         'PasswordHash': password
@@ -44,8 +44,7 @@ class DataProvider {
                 Code.LOGIN_STATUS.name, true); // store login state
             await storage.setString(Code.GPT_USER_ID.name,
                 res.payLoad!.gptUserId.toString()); //store user id state
-            await Factory().saveLoginResponse(jsonEncode(
-                res));
+            await Factory().saveLoginResponse(jsonEncode(res));
             ////Passing the response as an argument to a method defined in factory that saves the whole response to a state
             //print(res.payLoad!.gptUserId.toString());
             progressDialogListener
@@ -65,27 +64,37 @@ class DataProvider {
     debugPrint(email + " " + password + " Logged In ");
   }
 
-  getTopics(ProgressDialogListener progressDialogListener,BuildContext context) async {
+  getTopics(ProgressDialogListener progressDialogListener,
+      BuildContext context) async {
     if (await Connection().isNotConnected()) {
       Factory().showSnackbar(context, 'NO CONNECTION');
       return;
     }
     final SharedPreferences storage = await SharedPreferences.getInstance();
-    var gptUserId=  storage.getString(Code.GPT_USER_ID.name);
+    var gptUserId = storage.getString(Code.GPT_USER_ID.name);
 
-progressDialogListener.show();
+    progressDialogListener.show();
     var formData = FormData.fromMap({'Gpt_User_Id': gptUserId});
     try {
       final response =
           await dio.post('https://haji.ai:2053/GetTopic', data: formData);
 
       TopicsResponse res = TopicsResponse.fromJson(response.data);
-     // storage.setString(Code.TOPICS.name, jsonEncode(resp))
-progressDialogListener.hide(res);
-
+      // storage.setString(Code.TOPICS.name, jsonEncode(resp))
+      progressDialogListener.hide(res);
     } catch (e) {
       print("FOLLOWING ERROR OCCURED: $e");
     }
+  }
 
-   }
+  getProfile(BuildContext context,
+      ProgressDialogListener progressDialogListener) async {
+    progressDialogListener.show();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? user =  sharedPreferences.getString(Code.LOGIN_RESPONSE.name);
+    LoginResponse data= LoginResponse.fromJson(jsonDecode(user!));
+    debugPrint("this is user data: "+user.toString());
+    progressDialogListener.hide(data);
+  }
+
 }

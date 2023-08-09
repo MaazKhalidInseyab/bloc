@@ -1,5 +1,6 @@
 import 'package:bloc/Ui/Home/HomeScreen.dart';
 import 'package:bloc/Ui/LoginScreen/LoginScreen.dart';
+import 'package:bloc/Ui/Profile/ProfileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/Ui/Counter/CounterBloc.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home:  HomeScreen(),
+      home:  LoginScreen(),
     );
   }
 }
