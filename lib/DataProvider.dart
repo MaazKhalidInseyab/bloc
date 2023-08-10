@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/Connection.dart';
+import 'package:bloc/Models/ChatHistoryResponse.dart';
 import 'package:bloc/ProgressDialogListener.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,7 +79,6 @@ class DataProvider {
     try {
       final response =
           await dio.post('https://haji.ai:2053/GetTopic', data: formData);
-
       TopicsResponse res = TopicsResponse.fromJson(response.data);
       // storage.setString(Code.TOPICS.name, jsonEncode(resp))
       progressDialogListener.hide(res);
@@ -87,14 +87,35 @@ class DataProvider {
     }
   }
 
-  getProfile(BuildContext context,
-      ProgressDialogListener progressDialogListener) async {
+  getProfile(SharedPreferences prefs) {
+    String? user = prefs.getString(Code.LOGIN_RESPONSE.name);
+    LoginResponse data = LoginResponse.fromJson(jsonDecode(user!));
+    debugPrint("this is user data: " + user.toString());
+    return data;
+  }
+
+  getChatHistory(BuildContext context,
+      ProgressDialogListener progressDialogListener,topicId) async {
+    final SharedPreferences storage = await SharedPreferences.getInstance();
+    var gptUserId = storage.getString(Code.GPT_USER_ID.name);
+    var contact = storage.getInt(Code.CONTACT.name);
+    //var topicId = storage.getString(Code.TOPIC_ID.name);
+    var formData = FormData.fromMap({'Gpt_User_Id': gptUserId,'Topic_ID': topicId,'ContactNo':9233628543619});
+    if (await Connection().isNotConnected()) {
+      Factory().showSnackbar(context, 'NO CONNECTION');
+      return;
+    }
     progressDialogListener.show();
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? user =  sharedPreferences.getString(Code.LOGIN_RESPONSE.name);
-    LoginResponse data= LoginResponse.fromJson(jsonDecode(user!));
-    debugPrint("this is user data: "+user.toString());
-    progressDialogListener.hide(data);
+    try {
+      final response = await dio 
+          .post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);
+      ChatHistory res = ChatHistory.fromJson(response.data);
+      print("dataProvider "+res.messages!.elementAt(0).auditLog.toString());
+      print(res.messages!.elementAt(0).auditLogResponse);
+      progressDialogListener.hide(res);
+    } catch (e) {
+      print("FOLLOWING ERROR OCCURED: $e");
+    }
   }
 
 }

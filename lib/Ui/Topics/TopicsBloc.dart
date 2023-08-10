@@ -33,7 +33,7 @@ getTopics(){
     // TODO: implement hide
     Factory().dismissProgressDialog(context);
     var res=data as TopicsResponse;
-    topics.sink.add(data.payLoad!.topic!);
+    topics.sink.add(res.payLoad!.topic!);
   }
 
   @override
