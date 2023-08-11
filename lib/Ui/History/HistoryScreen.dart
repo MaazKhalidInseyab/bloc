@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import '../../Models/ChatHistoryResponse.dart';
 
 class History extends StatefulWidget {
-  const History({super.key});
+
+  final int topic;
+  History(this.topic);
 
   @override
   State<History> createState() => _HistoryState();
@@ -17,6 +19,7 @@ class _HistoryState extends State<History> {
   @override
   void initState() {
     hb = HistoryBloc(context);
+    hb.getChatHistory(widget.topic);
   }
 
   @override
@@ -35,21 +38,52 @@ class _HistoryState extends State<History> {
               child: StreamBuilder(
                 stream: hb.chat.stream,
                 builder:
-                    (BuildContext context, AsyncSnapshot<String> chat) {
-                  return  Card(
+                    (BuildContext context, AsyncSnapshot<List<Messages>> chat) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount:chat.hasData? chat.data!.length:0,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Row(
+                            children: [
+                              Card(
 
-                        child: Column(
-                          children: [
-                            Text(chat.hasData
-                                ? chat.data.toString()
-                                : "No dataaa"),
-                          ],
-                        ),
+                                color: Colors.amberAccent,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(chat.hasData
+                                      ? "Prompt: "+ chat.data!.elementAt(index).auditLog.toString()
+                                      : "No dataaa"),
+                                ),
+                              ),
+                            ],
+                          ),Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Card(
+
+                                  color: Colors.lightBlueAccent[100],
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(chat.hasData
+                                        ? chat.data!.elementAt(index).auditLogResponse.toString()
+                                        : "No dataaa"),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
                       );
                     },
-                  )
-
-            )],
+                  );
+                },
+              ),
+            )
+          ],
         ),
       ),
     );

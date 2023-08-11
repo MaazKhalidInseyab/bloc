@@ -99,7 +99,7 @@ class DataProvider {
     final SharedPreferences storage = await SharedPreferences.getInstance();
     var gptUserId = storage.getString(Code.GPT_USER_ID.name);
     var contact = storage.getInt(Code.CONTACT.name);
-    //var topicId = storage.getString(Code.TOPIC_ID.name);
+
     var formData = FormData.fromMap({'Gpt_User_Id': gptUserId,'Topic_ID': topicId,'ContactNo':9233628543619});
     if (await Connection().isNotConnected()) {
       Factory().showSnackbar(context, 'NO CONNECTION');
@@ -107,14 +107,13 @@ class DataProvider {
     }
     progressDialogListener.show();
     try {
-      final response = await dio 
-          .post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);
+      final response = await dio.post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);
       ChatHistory res = ChatHistory.fromJson(response.data);
       print("dataProvider "+res.messages!.elementAt(0).auditLog.toString());
-      print(res.messages!.elementAt(0).auditLogResponse);
+
       progressDialogListener.hide(res);
     } catch (e) {
-      print("FOLLOWING ERROR OCCURED: $e");
+      print("FOLLOWING ERROR OCCUREDD: $e");
     }
   }
 

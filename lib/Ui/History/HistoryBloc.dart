@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'HistoryScreen.dart';
 
 class HistoryBloc implements ProgressDialogListener {
-  final chat = BehaviorSubject<String>();
+  final chat = BehaviorSubject<List<Messages>>();
 
   BuildContext context;
 
@@ -28,15 +28,17 @@ class HistoryBloc implements ProgressDialogListener {
   @override
   void hide(Object data) {
     Factory().dismissProgressDialog(context);
-    ChatHistory res = data as ChatHistory;
-    print("HistoryBloc " +
-        res.messages!.elementAt(0).auditLogResponse.toString());
-    chat.sink.add(res.messages!.elementAt(0).auditLogResponse.toString());
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => History(),
-        ));
+    final res = data as ChatHistory;
+    //final chatList = [];
+    for(int i=0;i<res.messages!.length;i++){
+     print(res.messages!.elementAt(i).auditLog.toString()) ;
+    }
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => History(),
+    //     ));
+    chat.sink.add(res.messages!);
   }
 
   @override

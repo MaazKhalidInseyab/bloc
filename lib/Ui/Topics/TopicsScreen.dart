@@ -3,6 +3,7 @@ import 'package:bloc/Ui/Home/HomeBloc.dart';
 import 'package:bloc/Ui/Topics/TopicsBloc.dart';
 import 'package:flutter/material.dart';
 import '../../Models/TopicsResponse.dart';
+import '../History/HistoryScreen.dart';
 
 
 class Topics extends StatefulWidget {
@@ -45,7 +46,13 @@ void initState() {
                   itemBuilder: (BuildContext context, int index) {
                     var num=index+1;
                     return GestureDetector(
-                      onTap:()=> hb.getChatHistory(topics.data!.elementAt(index).topicID),
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => History(topics.data!.elementAt(index).topicID!),
+                            ));
+                      },
                       child: Card(
 //
 
