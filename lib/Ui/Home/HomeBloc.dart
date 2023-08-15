@@ -1,7 +1,9 @@
-import 'package:bloc/Ui/Home/HomeScreen.dart';
+
 import 'package:bloc/Ui/Profile/ProfileScreen.dart';
 import 'package:bloc/Ui/Topics/TopicsScreen.dart';
 import 'package:flutter/material.dart';
+
+import '../../Factory.dart';
 
 class HomeBloc {
   BuildContext context;
@@ -22,5 +24,8 @@ class HomeBloc {
         MaterialPageRoute(
           builder: (context) => ProfileScreen(),
         ));
+  }
+  ChatsNavigator() {
+    Factory().showSnackbar(context, 'Please Select a Topic from the Pink Card');
   }
 }

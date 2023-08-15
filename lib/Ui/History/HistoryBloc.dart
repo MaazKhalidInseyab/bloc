@@ -11,6 +11,7 @@ import 'HistoryScreen.dart';
 
 class HistoryBloc implements ProgressDialogListener {
   final chat = BehaviorSubject<List<Messages>>();
+  final chatname=BehaviorSubject<String>();
 
   BuildContext context;
 
@@ -38,6 +39,7 @@ class HistoryBloc implements ProgressDialogListener {
     //     MaterialPageRoute(
     //       builder: (context) => History(),
     //     ));
+
     chat.sink.add(res.messages!);
   }
 

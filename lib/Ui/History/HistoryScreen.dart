@@ -1,3 +1,4 @@
+import 'package:bloc/Factory.dart';
 import 'package:bloc/Ui/History/HistoryBloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,9 @@ import 'package:flutter/material.dart';
 import '../../Models/ChatHistoryResponse.dart';
 
 class History extends StatefulWidget {
-
   final int topic;
-  History(this.topic);
+final String topicName;
+  History(this.topic,this.topicName);
 
   @override
   State<History> createState() => _HistoryState();
@@ -25,23 +26,26 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("C H A T"),
-              ),
+            Row(
+              children: [
+                IconButton(icon:Icon(CupertinoIcons.back),onPressed: (){
+                  Navigator.pop(context);
+                },),
+                Expanded(  child: Text(widget.topicName,style:TextStyle(color: Colors.white))),
+              ],
             ),
-            Flexible(
+            Expanded(
               child: StreamBuilder(
                 stream: hb.chat.stream,
                 builder:
                     (BuildContext context, AsyncSnapshot<List<Messages>> chat) {
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount:chat.hasData? chat.data!.length:0,
+                    itemCount: chat.hasData ? chat.data!.length : 0,
                     itemBuilder: (BuildContext context, int index) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -49,32 +53,41 @@ class _HistoryState extends State<History> {
                           Row(
                             children: [
                               Card(
-
-                                color: Colors.amberAccent,
+                                color: Colors.green[600],
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(chat.hasData
-                                      ? "Prompt: "+ chat.data!.elementAt(index).auditLog.toString()
-                                      : "No dataaa"),
+                                      ? "You: " +
+                                          chat.data!
+                                              .elementAt(index)
+                                              .auditLog
+                                              .toString()
+                                      : "No dataaa",style: TextStyle(color: Colors.white),),
                                 ),
                               ),
                             ],
-                          ),Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Flexible(
-                                child: Card(
-
-                                  color: Colors.lightBlueAccent[100],
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(chat.hasData
-                                        ? chat.data!.elementAt(index).auditLogResponse.toString()
-                                        : "No dataaa"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 24.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: Card(
+                                    color: Colors.green[900],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(chat.hasData
+                                          ? chat.data!
+                                              .elementAt(index)
+                                              .auditLogResponse
+                                              .toString()
+                                          : "No dataaa",style: TextStyle(color: Colors.white)),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           )
                         ],
                       );
@@ -82,7 +95,30 @@ class _HistoryState extends State<History> {
                   );
                 },
               ),
-            )
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.add_circle,color: Colors.teal),
+                  ),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: "Type a Message",
+                        hintStyle: TextStyle(color: Colors.white)
+                      ),
+                    ),
+                  )),
+                  ElevatedButton(
+                      onPressed: () {Factory().showSnackbar(context, "You can't reply to this conversation");}, child: Icon(Icons.rocket_launch_sharp))
+                ],
+              ),
+            ),
           ],
         ),
       ),

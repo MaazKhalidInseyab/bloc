@@ -44,7 +44,9 @@ class DataProvider {
             await storage.setBool(
                 Code.LOGIN_STATUS.name, true); // store login state
             await storage.setString(Code.GPT_USER_ID.name,
-                res.payLoad!.gptUserId.toString()); //store user id state
+                res.payLoad!.gptUserId.toString());
+            await storage.setString(Code.CONTACT.name,
+                res.payLoad!.phoneNumber.toString());//store user id state
             await Factory().saveLoginResponse(jsonEncode(res));
             ////Passing the response as an argument to a method defined in factory that saves the whole response to a state
             //print(res.payLoad!.gptUserId.toString());
@@ -88,6 +90,7 @@ class DataProvider {
   }
 
   getProfile(SharedPreferences prefs) {
+
     String? user = prefs.getString(Code.LOGIN_RESPONSE.name);
     LoginResponse data = LoginResponse.fromJson(jsonDecode(user!));
     debugPrint("this is user data: " + user.toString());
@@ -96,15 +99,16 @@ class DataProvider {
 
   getChatHistory(BuildContext context,
       ProgressDialogListener progressDialogListener,topicId) async {
-    final SharedPreferences storage = await SharedPreferences.getInstance();
-    var gptUserId = storage.getString(Code.GPT_USER_ID.name);
-    var contact = storage.getInt(Code.CONTACT.name);
-
-    var formData = FormData.fromMap({'Gpt_User_Id': gptUserId,'Topic_ID': topicId,'ContactNo':9233628543619});
     if (await Connection().isNotConnected()) {
       Factory().showSnackbar(context, 'NO CONNECTION');
       return;
     }
+    final SharedPreferences storage = await SharedPreferences.getInstance();
+    var gptUserId = storage.getString(Code.GPT_USER_ID.name);
+    var contact = storage.getString(Code.CONTACT.name);
+
+    var formData = FormData.fromMap({'Gpt_User_Id': gptUserId,'Topic_ID': topicId,'ContactNo':contact});
+
     progressDialogListener.show();
     try {
       final response = await dio.post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);

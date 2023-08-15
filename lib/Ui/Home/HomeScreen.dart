@@ -151,6 +151,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+       // backgroundColor: Colors.black,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -251,6 +252,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
                 ],
               ),
               GestureDetector(
+                onTap:()=> homeBloc.ChatsNavigator(),
                 child: Card(
                   elevation: 8,
                   child: Container(
