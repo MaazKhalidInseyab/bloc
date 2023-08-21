@@ -1,5 +1,8 @@
 
+
+
 import 'package:bloc/Ui/Constants.dart';
+import 'package:bloc/Ui/History/HistoryBloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +12,7 @@ import 'Code.dart';
 class Factory{
 
   showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.white,
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.white,duration: Duration(seconds: 1),
       content: Center(child: Text(message,style: TextStyle(color: Colors.cyan.shade900))),
     ));
   }

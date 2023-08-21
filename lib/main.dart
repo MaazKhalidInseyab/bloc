@@ -1,3 +1,4 @@
+import 'package:bloc/Ui/Counter/CounterScreen.dart';
 import 'package:bloc/Ui/LoginScreen/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        colorScheme:null,
         useMaterial3: true,
       ),
       home:  LoginScreen(),

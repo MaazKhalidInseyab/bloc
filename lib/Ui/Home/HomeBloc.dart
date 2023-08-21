@@ -4,6 +4,7 @@ import 'package:bloc/Ui/Topics/TopicsScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../../Factory.dart';
+import '../Counter/CounterScreen.dart';
 
 class HomeBloc {
   BuildContext context;
@@ -23,6 +24,13 @@ class HomeBloc {
         context,
         MaterialPageRoute(
           builder: (context) => ProfileScreen(),
+        ));
+  }
+  CalculatorNavigator() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Calculator(),
         ));
   }
   ChatsNavigator() {

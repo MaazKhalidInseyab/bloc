@@ -208,7 +208,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
                       ),
                       Row(
                         children:[ GestureDetector(
-                          onTap: () => homeBloc.profileNavigator(),
+                          onTap: () => homeBloc.CalculatorNavigator(),
                           child: Card(
                             elevation: 8,
                             child: Container(
