@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/Connection.dart';
 import 'package:bloc/Models/ChatHistoryResponse.dart';
+import 'package:bloc/Models/PromptResponse.dart';
 import 'package:bloc/ProgressDialogListener.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,10 +44,10 @@ class DataProvider {
                 .getInstance(); /////create sharedPreferences Instance
             await storage.setBool(
                 Code.LOGIN_STATUS.name, true); // store login state
-            await storage.setString(Code.GPT_USER_ID.name,
-                res.payLoad!.gptUserId.toString());
+            await storage.setString(
+                Code.GPT_USER_ID.name, res.payLoad!.gptUserId.toString());
             await storage.setString(Code.CONTACT.name,
-                res.payLoad!.phoneNumber.toString());//store user id state
+                res.payLoad!.phoneNumber.toString()); //store user id state
             await Factory().saveLoginResponse(jsonEncode(res));
             ////Passing the response as an argument to a method defined in factory that saves the whole response to a state
             //print(res.payLoad!.gptUserId.toString());
@@ -76,7 +77,7 @@ class DataProvider {
     final SharedPreferences storage = await SharedPreferences.getInstance();
     var gptUserId = storage.getString(Code.GPT_USER_ID.name);
 
-    progressDialogListener.show();
+
     var formData = FormData.fromMap({'Gpt_User_Id': gptUserId});
     try {
       final response =
@@ -90,7 +91,6 @@ class DataProvider {
   }
 
   getProfile(SharedPreferences prefs) {
-
     String? user = prefs.getString(Code.LOGIN_RESPONSE.name);
     LoginResponse data = LoginResponse.fromJson(jsonDecode(user!));
     debugPrint("this is user data: " + user.toString());
@@ -98,7 +98,7 @@ class DataProvider {
   }
 
   getChatHistory(BuildContext context,
-      ProgressDialogListener progressDialogListener,topicId) async {
+      ProgressDialogListener progressDialogListener, topicId) async {
     if (await Connection().isNotConnected()) {
       Factory().showSnackbar(context, 'NO CONNECTION');
       return;
@@ -107,18 +107,57 @@ class DataProvider {
     var gptUserId = storage.getString(Code.GPT_USER_ID.name);
     var contact = storage.getString(Code.CONTACT.name);
 
-    var formData = FormData.fromMap({'Gpt_User_Id': gptUserId,'Topic_ID': topicId,'ContactNo':contact});
+    var formData = FormData.fromMap(
+        {'Gpt_User_Id': gptUserId, 'Topic_ID': topicId, 'ContactNo': contact});
 
     progressDialogListener.show();
     try {
-      final response = await dio.post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);
+      final response = await dio
+          .post('https://haji.ai:2053/GetHistoryByTopicID', data: formData);
       ChatHistory res = ChatHistory.fromJson(response.data);
-      print("dataProvider "+res.messages!.elementAt(0).auditLog.toString());
+      print("dataProvider " + res.messages!.elementAt(0).auditLog.toString());
 
       progressDialogListener.hide(res);
+       //storage.setString(Code.TOPIC_ID.name, topicId);
     } catch (e) {
       print("FOLLOWING ERROR OCCUREDD: $e");
     }
   }
 
+  askQuestion(ProgressDialogListener progressDialogListener, BuildContext context,
+      String question,String topicId)async {
+    if(await Connection().isNotConnected()){
+      Factory().showSnackbar(context, "Not Connected");
+      return;
+    }
+    progressDialogListener.show();
+print(question);
+    SharedPreferences storage=await SharedPreferences.getInstance();
+   var contact= storage.getString(Code.CONTACT.name);
+   var userId= storage.getString(Code.GPT_USER_ID.name);
+
+    final formData = FormData.fromMap({
+      'AuditLogQuestion': question,
+      'ContactNo': contact,
+      'Gpt_User_Id': userId,
+      'Model': 'THREE',
+      'Topic_ID':topicId
+    });
+    print(contact.toString()+" "+topicId.toString()+" "+userId.toString());
+    try{
+      var response=await dio.post('https://haji.ai:2053/GPT_Question',data: formData);
+
+      if(response.statusCode==200){
+        print(response.data);
+        PromptResponse res = PromptResponse.fromJson(response.data);
+        progressDialogListener.hide(res);
+      }else{
+        Factory().dismissProgressDialog(context);
+      }
+
+    }catch(e){
+      print(e);
+    }
+
+  }
 }

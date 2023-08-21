@@ -144,7 +144,7 @@ hintStyle: TextStyle(color: Colors.black38),
                         ),
                       ),
                     ),
-                  ),IconButton(onPressed: (){bloc.sendMessage();}, icon:Icon(Icons.rocket_launch_sharp,color: Colors.teal,) )
+                  ),IconButton(onPressed: (){bloc.sendMessage(widget.topic.toString());}, icon:Icon(Icons.rocket_launch_sharp,color: Colors.teal,) )
                 ],
               ),
             )

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Code.dart';
 import 'HistoryScreen.dart';
 
 class HistoryBloc implements ProgressDialogListener {
@@ -21,15 +22,18 @@ class HistoryBloc implements ProgressDialogListener {
   HistoryBloc(this.context);
 
   getChatHistory(int? topicId) async {
+    SharedPreferences storage = await SharedPreferences.getInstance();
+
     DataProvider().getChatHistory(context, this, topicId);
   }
 
-  sendMessage(String question ) {
-    goDown();
-    Factory().showSnackbar(context, messageField.text.toString());
-debugPrint(messageField.text.toString());
-    final res = data as ChatHistory;
-    chat.sink.add(res.messages!);
+  sendMessage(String topicId) {
+    debugPrint(messageField.text.toString());
+
+    DataProvider()
+        .askQuestion(this, context, messageField.text.toString(), topicId);
+    messageField.text = "";
+    print(topicId);
   }
 
   @override
@@ -41,19 +45,9 @@ debugPrint(messageField.text.toString());
   void hide(Object data) {
     Factory().dismissProgressDialog(context);
     final res = data as ChatHistory;
-    //final chatList = [];
-    for (int i = 0; i < res.messages!.length; i++) {
-      print(res.messages!.elementAt(i).auditLog.toString());
-    }
-    goDown();
-
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => History(),
-    //     ));
 
     chat.sink.add(res.messages!);
+    goDown();
   }
 
   @override
